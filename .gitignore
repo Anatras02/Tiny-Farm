@@ -1,3 +1,7 @@
-*
 !*.c
 !Makefile
+cmake-build-debug
+env
+.idea
+*.o
+farm
