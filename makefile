@@ -1,16 +1,19 @@
+# definizione del compilatore e dei flag di compilazione
+# che vengono usate dalle regole implicite
 CC=gcc
-CFLAGS=-g -Wall -O -std=gnu99
+CFLAGS=-g -Wall -O -std=c99
 LDLIBS=-lm -lrt -pthread
 
-# eseguibili da costruire
-EXECS=farm
+# singolo eseguilbile da compilare
+MAIN=farm
+EXECS=
 
-.PHONY: clean
+# se si scrive solo make di default compila main
+all: $(MAIN) $(EXECS)
 
-# di default make cerca di realizzare il primo target
-all: $(EXECS)
+farm: farm.o xerrori/xerrori.o
 
-# non devo scrivere il comando associato ad ogni target
-# perché il default di make in questo caso va bene
+# target che cancella eseguibili e file oggetto
+clean:
+	rm -f $(MAIN) $(EXECS) *.o
 
-farm: farm.o
