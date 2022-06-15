@@ -14,7 +14,8 @@ int main(int argc, char *argv[]) {
     int lunghezza_buffer = 8;
     int delay = 0;
 
-    while ((opt = getopt(argc, argv, "n:q:t:")) != -1) {
+    opterr = 0;
+    while ((opt = getopt(argc, argv, "n:q:t:")) != -1) { //Se lo stesso parametro viene passato più volte prende l'ultimo
         switch (opt) {
             case 'n':
                 numero_thread = atoi(optarg);
@@ -26,9 +27,10 @@ int main(int argc, char *argv[]) {
                 delay = atoi(optarg);
                 break;
             default:
-                continue;
+                continue; //Se vengono passati altri parametri li salta
         }
     }
+    opterr = 1;
 
     return 0;
 }
