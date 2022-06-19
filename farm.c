@@ -64,6 +64,10 @@ int main(int argc, char *argv[]) {
     int numero_file;
     char **file_names = get_nomi_file(argc, argv, &numero_file);
 
+    for (int i = 0; i < numero_file; i++) {
+        assert(strlen(file_names[i]) < 256);
+    }
+
     pthread_t produttore_thread;
     pdati dati_produttore;
     dati_produttore.buffer = buffer;
@@ -74,6 +78,7 @@ int main(int argc, char *argv[]) {
     dati_produttore.sem_data_items = &sem_data_items;
     dati_produttore.nomi_file = file_names;
     dati_produttore.numero_file = numero_file;
+    dati_produttore.delay = delay;
 
     //faccio partire il produttore
     xpthread_create(&produttore_thread, NULL, produttore_body, &dati_produttore, QUI);
@@ -95,6 +100,7 @@ int main(int argc, char *argv[]) {
         xpthread_create(&consumatori[i], NULL, consumatore_body, dati_consumatore + i, QUI);
     }
 
+    xpthread_join(produttore_thread, NULL, QUI);
     fprintf(stderr, "Produttore terminato\n");
 
     for (int i = 0; i < numero_thread; i++) {
@@ -108,8 +114,6 @@ int main(int argc, char *argv[]) {
     }
 
     fprintf(stderr, "Consumatori terminati\n");
-
-    xpthread_join(produttore_thread, NULL, QUI);
 
 
     free(buffer);

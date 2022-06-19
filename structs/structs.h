@@ -9,6 +9,7 @@ typedef struct {
     sem_t *sem_data_items;
     char **nomi_file;
     int numero_file;
+    int delay;
 } pdati;
 
 typedef struct {

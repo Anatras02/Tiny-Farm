@@ -38,7 +38,7 @@ void *consumatore_body(void *arg) {
             counter += 1;
         }
 
-        printf("%s %ld\n", filename, sum);
+        printf("Somma file: %ld\n", sum);
 
     } while (true);
 

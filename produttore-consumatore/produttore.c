@@ -15,6 +15,7 @@ void *produttore_body(void *arg) {
         *(a->pindex) += 1;
         xpthread_mutex_unlock(a->pmutex, QUI);
         xsem_post(a->sem_data_items, QUI);
+        usleep(a->delay);
     }
 
 

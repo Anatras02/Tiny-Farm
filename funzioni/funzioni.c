@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include "../xerrori/xerrori.h"
 
 char **get_nomi_file(int argc, char *argv[], int *n) {
