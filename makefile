@@ -11,7 +11,7 @@ EXECS=
 # se si scrive solo make di default compila main
 all: $(MAIN) $(EXECS)
 
-farm: farm.o xerrori/xerrori.o functions/functions.o
+farm: farm.o xerrori/xerrori.o funzioni/funzioni.o produttore-consumatore/produttore.o produttore-consumatore/consumatore.o
 
 # target che cancella eseguibili e file oggetto
 clean:
