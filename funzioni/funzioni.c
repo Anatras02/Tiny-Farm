@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "../xerrori/xerrori.h"
 
-char **get_file_names(int argc, char *argv[], int *n) {
+char **get_nomi_file(int argc, char *argv[], int *n) {
     char **file_names = malloc(sizeof(char *) * argc - 1);
     if (file_names == NULL) {
         termina("Malloc fallita");
@@ -12,7 +12,7 @@ char **get_file_names(int argc, char *argv[], int *n) {
     int trovati = 0;
 
     for (int i = 1; i < argc; i++) {
-        if (strstr(argv[i], "-n") || strstr(argv[i], "-q") || strstr(argv[i], "-t")) {
+        if (strstr(argv[i], "-n") || strstr(argv[i], "-q") || strstr(argv[i], "-t") || strstr(argv[i], "-d")) {
             i += 1;
         } else {
             file_names[trovati++] = argv[i];
