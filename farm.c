@@ -66,6 +66,7 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < numero_file; i++) {
         assert(strlen(file_names[i]) < 256);
+        assert(strcmp(file_names[i], "BREAK") != 0);
     }
 
     pthread_t produttore_thread;
@@ -101,7 +102,6 @@ int main(int argc, char *argv[]) {
     }
 
     xpthread_join(produttore_thread, NULL, QUI);
-    fprintf(stderr, "Produttore terminato\n");
 
     for (int i = 0; i < numero_thread; i++) {
         xsem_wait(&sem_free_slots, QUI);
@@ -112,8 +112,6 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < numero_thread; i++) {
         xpthread_join(consumatori[i], NULL, QUI);
     }
-
-    fprintf(stderr, "Consumatori terminati\n");
 
 
     free(buffer);
