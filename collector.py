@@ -35,16 +35,17 @@ def main(host=HOST, port=PORT):
 
 def gestisci_connessione(conn, addr):
     with conn:
-        data = recv_all(conn, 4)
-        dimensione = struct.unpack("!i", data[:4])[0]
+        data = recv_all(conn, 8)
+
+        dimensione = struct.unpack("!l", data[:4])[0]
 
         data = recv_all(conn, dimensione)
+        data_decode = data.decode()
 
-        print(data)
+        nome_file = data_decode.split("|")[0]
+        somma = data_decode.split("|")[1]
 
-        somma = struct.unpack("i", data[:4])[0]
-
-        print(somma)
+        print(f"{nome_file} {somma}")
 
 
 def recv_all(conn, n):

@@ -1,8 +1,8 @@
 char **get_nomi_file(int, char **, int *);
 
-int get_numero_cifre(long *);
+int get_lunghezza_numero_come_stringa(long);
 
-char *genera_stringa_socket(char *, long, int *);
+char *genera_stringa_socket(char *, long);
 
 ssize_t readn(int, void *, size_t);
 

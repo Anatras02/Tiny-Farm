@@ -22,6 +22,9 @@ int main(int argc, char *argv[]) {
     opterr = 0;
 
     //Se lo stesso parametro viene passato più volte prende l'ultimo
+    //Rispetto al progetto iniziale è stato aggiunto un nuovo parametro -d per definire la directory home da dove i file andranno presi, questo è stato
+    //fatto perché in fase di testing sono stati messi i file dentro una cartella separata ed era meglio in questa maniera piuttosto che scrivere tutta
+    //la path completa ogni volta.
     while ((opt = getopt(argc, argv, "n:q:t:d:")) != -1) {
         switch (opt) {
             case 'n':

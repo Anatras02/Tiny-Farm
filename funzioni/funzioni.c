@@ -27,8 +27,11 @@ char **get_nomi_file(int argc, char *argv[], int *n) {
     return file_names;
 }
 
-int get_numero_cifre(long n) {
+int get_lunghezza_numero_come_stringa(long n) {
     int count = 0;
+
+    if(n < 0) count++;
+
     while (n != 0) {
         n = n / 10;
         count++;
@@ -37,16 +40,12 @@ int get_numero_cifre(long n) {
     return count;
 }
 
-char *genera_stringa_socket(char *filename, long sum, int *dimensione_out) {
-    int dimensione = get_numero_cifre(sum) + strlen(filename) + 1;
-    char *buffer = malloc(dimensione * sizeof(char));
+char *genera_stringa_socket(char *filename, long somma) {
+    int dimensione = get_lunghezza_numero_come_stringa(somma) + strlen(filename); //+ 2 perché uno spazio è per il | e uno per lo zero finale
+    char *stringa_socket = malloc(dimensione * sizeof(char));
 
-    *dimensione_out = dimensione;
-
-    sprintf(buffer, "%s|%ld", filename, sum);
-
-
-    return buffer;
+    sprintf(stringa_socket, "%s|%ld", filename, somma);
+    return stringa_socket;
 }
 
 /* Read "n" bytes from a descriptor */
