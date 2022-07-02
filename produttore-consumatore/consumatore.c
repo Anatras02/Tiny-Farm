@@ -46,6 +46,8 @@ void *consumatore_body(void *arg) {
             counter += 1;
         }
 
+        fclose(f);
+
         char * stringa_socket = genera_stringa_socket(filename, somma);
 
         int dimensione = strlen(stringa_socket);
@@ -82,6 +84,7 @@ void *consumatore_body(void *arg) {
 
         free(stringa_socket);
     } while (true);
+
 
     pthread_exit(NULL);
 }

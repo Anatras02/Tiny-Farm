@@ -116,7 +116,6 @@ int main(int argc, char *argv[]) {
         xpthread_join(consumatori[i], NULL, QUI);
     }
 
-
     free(buffer);
     free(file_names);
 
