@@ -17,11 +17,10 @@ class CloseSocketSignal(Exception):
 
 # codice da eseguire nei singoli thread
 class ClientThread(threading.Thread):
-    def __init__(self, conn, addr, s):
-        threading.Thread.__init__(self)
+    def __init__(self, conn, addr, *args, **kwargs):
+        threading.Thread.__init__(self, *args, **kwargs)
         self.conn = conn
         self.addr = addr
-        self.socket = s
 
     def run(self):
         try:
@@ -38,7 +37,7 @@ def main(host=HOST, port=PORT):
             while True:
                 conn, addr = s.accept()
 
-                t = ClientThread(conn, addr, s)
+                t = ClientThread(conn, addr)
                 t.start()
         except KeyboardInterrupt:
             pass

@@ -3,8 +3,30 @@
 #include "structs/structs.h"
 #include "produttore-consumatore/produttore.h"
 #include "produttore-consumatore/consumatore.h"
+#include <unistd.h>
+#include <arpa/inet.h>
 
+#define HOST "127.0.0.1"
+#define PORT 65432
 #define QUI __LINE__,__FILE__
+
+void *gestore_signal(void *v) {
+    bool * ferma_produttore = (bool *)v;
+
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGINT);
+
+    int s;
+    while(true) {
+        int e = sigwait(&mask,&s);
+        if(e!=0) perror("Errore sigwait");
+
+        *ferma_produttore = true;
+    }
+
+    return NULL;
+}
 
 int main(int argc, char *argv[]) {
     // controlla numero argomenti
@@ -49,6 +71,20 @@ int main(int argc, char *argv[]) {
     assert(dimensione_buffer > 0);
     assert(delay >= 0);
 
+
+    //blocco la SIGINT
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset( &mask, SIGINT);
+    pthread_sigmask(SIG_BLOCK,&mask,NULL);
+
+    //Genero e lancio il thread gestore del segnale
+    bool ferma_produttore = false;
+    pthread_t gestore_signal_thread;
+    xpthread_create(&gestore_signal_thread,NULL,gestore_signal,&ferma_produttore,QUI);
+
+
+
     //Creo il buffer
     char **buffer = malloc(sizeof(long) * dimensione_buffer);
 
@@ -83,12 +119,13 @@ int main(int argc, char *argv[]) {
     dati_produttore.nomi_file = file_names;
     dati_produttore.numero_file = numero_file;
     dati_produttore.delay = delay;
+    dati_produttore.ferma_produttore = &ferma_produttore;
 
     //faccio partire il produttore
     xpthread_create(&produttore_thread, NULL, produttore_body, &dati_produttore, QUI);
 
     // Setto i consumatori
-    pthread_t consumatori[numero_thread];
+    pthread_t consumatori_threads[numero_thread];
     cdati dati_consumatore[numero_thread];
 
     //faccio partire i consumatori
@@ -101,7 +138,7 @@ int main(int argc, char *argv[]) {
         dati_consumatore[i].sem_free_slots = &sem_free_slots;
         dati_consumatore[i].default_file_directory = default_file_directory;
 
-        xpthread_create(&consumatori[i], NULL, consumatore_body, dati_consumatore + i, QUI);
+        xpthread_create(&consumatori_threads[i], NULL, consumatore_body, dati_consumatore + i, QUI);
     }
 
     xpthread_join(produttore_thread, NULL, QUI);
@@ -113,8 +150,25 @@ int main(int argc, char *argv[]) {
     }
 
     for (int i = 0; i < numero_thread; i++) {
-        xpthread_join(consumatori[i], NULL, QUI);
+        xpthread_join(consumatori_threads[i], NULL, QUI);
     }
+
+    struct sockaddr_in serv_addr;
+    size_t e;
+    long tmp;
+    int fd_skt;
+
+    // assegna indirizzo
+    socket_init(&fd_skt, &serv_addr, HOST, PORT);
+    // apre connessione
+    socket_connect(fd_skt, serv_addr);
+
+    tmp = htonl(-1);
+    e = writen(fd_skt, &tmp, sizeof(tmp));
+    if (e != sizeof(tmp)) perror("Errore write dimensione");
+
+    if (close(fd_skt) < 0)
+        perror("Errore chiusura socket");
 
     free(buffer);
     free(file_names);

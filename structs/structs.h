@@ -10,6 +10,7 @@ typedef struct {
     char **nomi_file;
     int numero_file;
     int delay;
+    bool * ferma_produttore;
 } pdati;
 
 typedef struct {

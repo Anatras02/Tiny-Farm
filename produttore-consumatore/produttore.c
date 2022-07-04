@@ -16,6 +16,8 @@ void *produttore_body(void *arg) {
         xpthread_mutex_unlock(a->pmutex, QUI);
         xsem_post(a->sem_data_items, QUI);
         usleep(a->delay);
+
+        if (*(a->ferma_produttore)) break;
     }
 
 
