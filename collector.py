@@ -1,5 +1,7 @@
 #! env/lib/python3.10 python3
+import signal
 import sys
+import os
 import struct
 import socket
 import threading
@@ -9,28 +11,39 @@ HOST = "127.0.0.1"  # Standard loopback interface address (localhost)
 PORT = 65432  # Port to listen on (non-privileged ports are > 1023)
 
 
+class CloseSocketSignal(Exception):
+    pass
+
+
 # codice da eseguire nei singoli thread
 class ClientThread(threading.Thread):
-    def __init__(self, conn, addr):
+    def __init__(self, conn, addr, s):
         threading.Thread.__init__(self)
         self.conn = conn
         self.addr = addr
+        self.socket = s
 
     def run(self):
-        gestisci_connessione(self.conn, self.addr)
+        try:
+            gestisci_connessione(self.conn, self.addr)
+        except CloseSocketSignal:
+            os.kill(os.getpid(), signal.SIGINT)
 
 
 def main(host=HOST, port=PORT):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind((host, port))
-        s.listen()
-        while True:
-            conn, addr = s.accept()
+        try:
+            s.bind((host, port))
+            s.listen()
+            while True:
+                conn, addr = s.accept()
 
-            t = ClientThread(conn, addr)
-            t.start()
+                t = ClientThread(conn, addr, s)
+                t.start()
+        except KeyboardInterrupt:
+            pass
 
-    s.shutdown(socket.SHUT_RDWR)
+        s.shutdown(socket.SHUT_RDWR)
 
 
 def gestisci_connessione(conn, addr):
@@ -38,6 +51,10 @@ def gestisci_connessione(conn, addr):
         data = recv_all(conn, 8)
 
         dimensione = struct.unpack("!l", data[:4])[0]
+        if dimensione == -1:
+            raise CloseSocketSignal
+
+        assert (dimensione > 0)
 
         data = recv_all(conn, dimensione)
         data_decode = data.decode()
