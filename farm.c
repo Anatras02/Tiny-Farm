@@ -84,7 +84,6 @@ int main(int argc, char *argv[]) {
     xpthread_create(&gestore_signal_thread,NULL,gestore_signal,&ferma_produttore,QUI);
 
 
-
     //Creo il buffer
     char **buffer = malloc(sizeof(long) * dimensione_buffer);
 

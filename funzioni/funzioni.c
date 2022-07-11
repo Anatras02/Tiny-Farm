@@ -80,7 +80,7 @@ int get_lunghezza_numero_come_stringa(long n) {
 
 char *genera_stringa_socket(char *filename, long somma) {
     int dimensione = get_lunghezza_numero_come_stringa(somma) +
-                     strlen(filename); //+ 2 perché uno spazio è per il | e uno per lo zero finale
+                     strlen(filename) + 2; //+2 perché uno spazio è per il | e uno per lo zero finale
     char *stringa_socket = malloc(dimensione * sizeof(char));
 
     sprintf(stringa_socket, "%s|%ld", filename, somma);
