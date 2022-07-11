@@ -1,4 +1,5 @@
-#! env/lib/python3.10 python3
+#! /usr/bin/env python3
+
 import signal
 import sys
 import os
